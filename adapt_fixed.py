@@ -10,7 +10,7 @@ class AdaptiveFixed(object):
         self.initialize_decoders(n_neurons, n_outputs)
         self.learning_rate_shift=int(round(np.log2(1.0/learning_rate)))
         self.has_neuron_state=has_neuron_state
-        self.input_max = 1<<16
+        self.input_max = 0xFFFF
         self.is_spiking = True
         if has_neuron_state:
             self.state = np.zeros(n_neurons, dtype='int64')
