@@ -4,13 +4,14 @@ import numpy as np
 class AdaptiveFixed(object):
     def __init__(self, n_inputs, n_outputs, n_neurons,
                  input_bits=16, state_bits=16, extra_bits=16,
-                 decoder_offset=0,
+                 decoder_offset=0, decoder_bits=16,
                  seed=None, learning_rate=1e-3,
                  has_neuron_state=True, smoothing=0):
         self.input_bits = input_bits
         self.state_bits = state_bits
         self.extra_bits = extra_bits
         self.decoder_offset = decoder_offset
+        self.decoder_bits = decoder_bits
         assert input_bits + state_bits + extra_bits < 64
         self.rng = np.random.RandomState(seed=seed)
         self.compute_encoders(n_inputs, n_neurons)
@@ -40,6 +41,10 @@ class AdaptiveFixed(object):
         # update the synapses with the learning rule
         index = np.where(activity>0)
         self.decoder[:,index] -= error >> self.learning_rate_shift
+
+        dec_max = 1<<(self.decoder_bits-1)-1
+        dec_min = -(1<<(self.decoder_bits-1))
+        self.decoder = np.clip(self.decoder, dec_min, dec_max)
 
         return value
 
